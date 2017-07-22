@@ -6,11 +6,14 @@
 		"start": "node node_modules/react-native/local-cli/cli.js start",
 		"test": "jest",
 		"eslint": "eslint src",
-    "ios": "react-native run-ios"
+		"ios": "react-native run-ios",
+		"android": "react-native run-android",
+    "link": "react-native link"
 	},
 	"dependencies": {
 		"react": "16.0.0-alpha.12",
 		"react-native": "0.46.4",
+		"react-native-bluetooth-serial": "^1.0.0-rc1",
 		"react-native-sensors": "^2.3.1"
 	},
 	"devDependencies": {
