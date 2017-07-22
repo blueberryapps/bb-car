@@ -73,7 +73,12 @@ export default class AnimationExample extends Component {
       }
     });
 
+    this.findConnection()
 
+  };
+
+  findConnection = () => {
+    console.log('try to connect')
     Promise.all([
       BluetoothSerial.isEnabled(),
       BluetoothSerial.list()
@@ -86,18 +91,33 @@ export default class AnimationExample extends Component {
         })
         this.setState({ isEnabled, device })
 
-        BluetoothSerial.connect(device.id)
-          .then((res) => {
-            console.log(`Connected to device`, res)
-            this.setState({connected: true })
-
-          })
-          .catch(err => {
-            alert('Amigo, no funciona!!')
-            this.setState({connected: false })
-          })
+        this.connect(device)
       })
-  };
+  }
+
+  connect = (device) => {
+    BluetoothSerial.connect(device.id)
+      .then((res) => {
+        console.log(`Connected to device`, res)
+        this.setState({connected: true })
+
+      })
+      .catch(err => {
+        alert('Amigo, no funciona!!')
+        this.setState({connected: false })
+      })
+  }
+
+  disconnect = () => {
+    BluetoothSerial.disconnect() && this.setState({connected: false})
+  }
+
+  handleConnectButton = () => {
+    const { connected, device } = this.state
+
+    connected ? this.disconnect(device.id) : this.findConnection()
+
+  }
 
   componentWillUnmount() {
     this.state.panAnimation.x.removeAllListeners();
@@ -153,8 +173,9 @@ export default class AnimationExample extends Component {
         BluetoothSerial.write(`${this.power.left} ${this.power.right}\n`)
           .catch((err) => console.error(err.message))
       }
-    },200)
+    },100)
   }
+
 
   render() {
     const { edgeLength, panAnimation, connected, scaleAnimation } = this.state;
@@ -173,6 +194,7 @@ export default class AnimationExample extends Component {
 
     return (
       <View>
+        <Button title={connected ? 'Disconnect' : 'Connect'} onPress={this.handleConnectButton}/>
         <Animated.View
           style={styles}
           {...this.panResponder.panHandlers}
