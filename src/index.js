@@ -2,12 +2,7 @@
 import React, { Component } from 'react';
 import {
   AppRegistry,
-  StyleSheet,
-  Text,
   View,
-  Animated,
-  PanResponder,
-  Dimensions,
   Button
 } from 'react-native';
 
@@ -25,6 +20,11 @@ export default class BluetoothWrapper extends Component {
 
   componentWillMount() {
     this.findConnection()
+
+
+    BluetoothSerial.on('data', (data)=>{
+      console.log('data', data)
+    })
 
   };
 
