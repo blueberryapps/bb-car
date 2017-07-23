@@ -3,8 +3,11 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   View,
-  Button
+  Button,
+  Dimensions
 } from 'react-native';
+
+import Radar from './Radar'
 
 import BluetoothSerial from 'react-native-bluetooth-serial'
 
@@ -15,17 +18,29 @@ export default class BluetoothWrapper extends Component {
     super(props);
     this.state = {
       connected: false,
+      data: {},
+      lastAngle: 0
     }
+  }
+
+  readData = () => {
+    BluetoothSerial.readUntilDelimiter('\n').then(x => {
+      if (x.length > 0) {
+        const { data, lastAngel } = this.state;
+        const [angle, front, back] = x.toString().split(' ').map(y => parseInt(y, 10));
+        console.log('xxxx', x, [angle, front, back]);
+        if (angle !== lastAngel || !data[angle] || data[angle][0] !== front || data[angle][1] !== back) {
+          this.setState({lastAngle: angle, data: {...data, [angle]: [front, back]}});
+        }
+      }
+      setTimeout(this.readData, 10);
+    });
   }
 
   componentWillMount() {
     this.findConnection()
 
-
-    BluetoothSerial.on('data', (data)=>{
-      console.log('data', data)
-    })
-
+    this.readData();
   };
 
   findConnection = () => {
@@ -51,9 +66,12 @@ export default class BluetoothWrapper extends Component {
       .then((res) => {
         console.log(`Connected to device`, res)
         this.setState({ connected: true })
+
+
       })
       .catch(err => {
         alert('Amigo, no funciona!!')
+        console.log(err)
         this.setState({ connected: false })
       })
   }
@@ -100,10 +118,16 @@ export default class BluetoothWrapper extends Component {
   }
 
   render() {
-    const { connected } = this.state;
+    const { connected, data, lastAngle } = this.state;
 
+    const { width, height } = Dimensions.get('window');
+    console.log(data)
+    console.log(lastAngle)
     return (
       <View>
+        <View style={{position: 'absolute', top: (height - width) / 2 + 36}}>
+          <Radar data={data} lastAngle={lastAngle} size={width}/>
+        </View>
         <Button title={connected ? 'Disconnect' : 'Connect'} onPress={this.handleConnectButton} />
         <AnimationWrapper connected={connected} sendData={this.sendData} setPower={this.setPower} clear={this.clearInterval}  />
       </View>

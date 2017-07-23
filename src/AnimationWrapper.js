@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 
 
+
 import { decreasePower, computePower, getRadians, getDegrees, calculateC, calculateAlfa } from './libs/calculations'
 
 export default class AnimationWrapper extends Component {
   constructor(props) {
     super(props);
     const { width, height } = Dimensions.get('window');
-    const edgeLength = 50;
+    const edgeLength = 30;
 
     const axisX = (width / 2) - (edgeLength / 2);
     const axisY = (height / 2) - (edgeLength / 2);

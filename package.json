@@ -8,13 +8,14 @@
 		"eslint": "eslint src",
 		"ios": "react-native run-ios",
 		"android": "react-native run-android",
-    "link": "react-native link"
+		"link": "react-native link"
 	},
 	"dependencies": {
 		"react": "16.0.0-alpha.12",
 		"react-native": "0.46.4",
 		"react-native-bluetooth-serial": "^1.0.0-rc1",
-		"react-native-sensors": "^2.3.1"
+		"react-native-sensors": "^2.3.1",
+		"react-native-svg": "5.3.0"
 	},
 	"devDependencies": {
 		"babel-eslint": "^7.2.3",
