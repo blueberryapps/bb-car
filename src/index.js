@@ -4,7 +4,8 @@ import {
   AppRegistry,
   View,
   Button,
-  Dimensions
+  Dimensions,
+  Text
 } from 'react-native';
 
 import Radar from './Radar'
@@ -18,7 +19,13 @@ export default class BluetoothWrapper extends Component {
     super(props);
     this.state = {
       connected: false,
-      data: {},
+      data: {
+        0: [200, 200],
+        45: [200, 200],
+        90: [200, 200],
+        135: [200, 200],
+        180: [200, 200]
+      },
       lastAngle: 0
     }
   }
@@ -26,10 +33,10 @@ export default class BluetoothWrapper extends Component {
   readData = () => {
     BluetoothSerial.readUntilDelimiter('\n').then(x => {
       if (x.length > 0) {
-        const { data, lastAngel } = this.state;
+        const { data, lastAngle } = this.state;
         const [angle, front, back] = x.toString().split(' ').map(y => parseInt(y, 10));
-        console.log('xxxx', x, [angle, front, back]);
-        if (angle !== lastAngel || !data[angle] || data[angle][0] !== front || data[angle][1] !== back) {
+
+        if ((angle !== lastAngle || !data[angle] || data[angle][0] !== front || data[angle][1] !== back) && angle >= 0 && front >= 0 && back >= 0 ) {
           this.setState({lastAngle: angle, data: {...data, [angle]: [front, back]}});
         }
       }
@@ -107,10 +114,12 @@ export default class BluetoothWrapper extends Component {
       if(connected){
         BluetoothSerial.write(`${this.power.left} ${this.power.right}\n`)
           .catch((err) => console.error(err.message))
+
+        // console.log('send data',`${this.power.left} ${this.power.right}\n`)
       }else{
         this.setState({connected})
       }
-    },100)
+    }, 50)
   }
 
   clearInterval = () => {
@@ -121,8 +130,12 @@ export default class BluetoothWrapper extends Component {
     const { connected, data, lastAngle } = this.state;
 
     const { width, height } = Dimensions.get('window');
-    console.log(data)
-    console.log(lastAngle)
+    // console.log(data)
+    // console.log(lastAngle)
+    // <Text>
+    //  data: {JSON.stringify(data)}
+    // </Text>
+
     return (
       <View>
         <View style={{position: 'absolute', top: (height - width) / 2 + 36}}>

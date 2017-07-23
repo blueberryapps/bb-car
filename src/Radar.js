@@ -47,8 +47,8 @@ class Radar extends React.Component {
     maximumValue: dimension((this.props.size - 20) / 2, 100.0) // 100 cm
   }
 
-  getX = (angle, distance) => Math.sin((angle % 90) * (Math.PI / 180)) * distance;
-  getY = (angle, distance) => Math.cos((angle % 90) * (Math.PI / 180)) * distance;
+  getX = (angle, distance) => Math.round(Math.sin((angle % 90) * (Math.PI / 180)) * distance);
+  getY = (angle, distance) => Math.round(Math.cos((angle % 90) * (Math.PI / 180)) * distance);
 
   getPixelDistance = distance => Math.round((this.state.circleRadius / this.state.maximumValue) * dimension(this.state.circleRadius, distance));
 
@@ -59,6 +59,28 @@ class Radar extends React.Component {
     return `${X},${Y}`;
   }
 
+  mockData = {
+  0: [40, 24],
+  10: [20, 21],
+  20: [22, 21],
+  30: [31, 21],
+  40: [19, 22],
+  50: [20, 286],
+  60: [21, 10],
+  70: [145, 10],
+  80: [179, 138],
+  90: [40, 136],
+  100: [19, 18],
+  110: [19, 47],
+  120: [24, 70],
+  130: [182, 71],
+  140: [104, 231],
+  150: [151, 62],
+  160: [17, 62],
+  170: [16, 63],
+  180: [40, 30],
+  }
+
   render() {
     const { data, lastAngle } = this.props;
     const { circleRadius, margin } = this.state;
@@ -67,11 +89,12 @@ class Radar extends React.Component {
     const top = this.getPosition(lastAngle, 100);
     const bottom = this.getPosition(lastAngle + 180, 100);
     const center = margin + circleRadius;
-    console.log(dd)
+    // console.log('datat', dd, data)
     return (
+
       <Svg height={center * 2} width={center * 2}>
         {dd.length > 0 && <Path d={`M${dd[0]} C ${dd.join(' ')} ${dd[0]}`} fill="lime" stroke="purple" strokeWidth="2" />}
-        <Polygon points={`${top} ${bottom}`} style={{ stroke: 'red', strokeWidth: 2 }} />
+        <Polygon points={`${top} ${bottom}`} stroke="red" strokeWidth="2" />
         <Circle cx={center} cy={center} r="10" fill="red" />
         <Circle cx={center} cy={center} r={this.getPixelDistance(firstCircle)} fill="red" fillOpacity="0.5" stroke="orange" strokeWidth="2" />
         <Text x={center - 8} y={center - this.getPixelDistance(firstCircle)} fill="orange">{firstCircle}</Text>
